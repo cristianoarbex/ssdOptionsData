@@ -4,6 +4,38 @@ This is the dataset used in the paper _Enhanced indexation using both equity ass
 
 The dataset comprises the period from 17/03/2017 until 01/08/2025. It is composed of the files below.
 
+___
+# Construction of an option strategy  (```Option strategy.xlsx```)
+
+Before describing the dataset, it is important to explain how an option strategy is constructed. The idea is that, from options that either exist or existed in the past, we build a long-term time series of returns. This time series can be interpreted as a __synthetic asset__ which mirrors returns obtained by investing continuously in options following a given policy.
+
+In order to explain how we construct an option strategy, we will make use of an illustration using data actually used in the paper above. The illustration is given in the spreadsheet ```Option strategy.xlsx```, included in this repository. The spreadsheet was built with Google Sheets, hence it might not be entirely compatible with other spreadsheet software. It can also be accessed via this link:
+
+https://docs.google.com/spreadsheets/d/1ejGgL8SAfKnR7vxi8WDHrjzuEAUksXU8sEHWWSJXuuE/edit?usp=sharing
+
+We are going to build the following option strategy (OS): _buy or keep a position in 3% Out-of-the-Money (OTM) puts if the return of the S&P500 over the past 30 business days is less than -5%_. 
+
+In the spreadsheet, we construct the returns of the option strategy above from 03/10/2022 until 25/10/2022. A step-by-step explanation of the spreadsheet is given below:
+
+  1. Columns __A__ and __B__ are the S&P500 prices 30 days prior to the range above. This information is used to calculate the condition used to create the OS as described above.
+  2. Columns __C-F__ are the main data from which option returns are built. These include S&P500 price, the risk-free rate and implied volatility (using VIX as a proxy).
+  3. Columns __G__ and __H__ indicate whether the condition established for the OS is true or false.
+  4. Columns __J-R__ build a continuous time series for a PUT OTM, with a 3% moneyness target. __This is not yet the OS__, rather it is a component that will later be used to build the OS. The continuous time series (continuous meaning without interruptions) assumes automatic rollover to a different option whenever one of these two conditions are met:
+     1. The current date is less than 20 days before the current expiration,
+     2. The current exercise $E$ has deviated $\pm 3%%$ from the option-implied forward price $F$ of the S&P500, meaning $|\frac{F - E}{F}| \geq 3%%$.
+
+### Deciding the expiration
+
+  5. In __Row 3__, the current date is 2022-10-03. Following the rules described in the paper for the most liquid S&P500 options, the next option available has its expiration date on the third Friday of the month, which happened on 2022-10-21. This is only 18 days to expiration, however, so we assume that the valid option to buy/hold is the one expiring at the last day of the month, 2022-10-31.
+  6. In __Row 10__, we change the expiration date because 2022-10-31 is less than 20 days after 2022-10-12. The interpretation here is that if we were to buy an option on 2022-10-03, we would buy the one with expiration on 2022-10-31.
+  7. With this decision we can calculate $L = 0.0767$ (time to expiration, in years), column __J__.
+  8. Say $S$ is the current S&P500 price (column __D__) and $r$ is the annualised risk-free rate (column __E__). Having $L$, we calculate $F$ in column $L$ with the formula: $S\times e^{rL}$.
+
+___
+# Data
+
+The data is located inside folder ```dataFiles``` and is comprised of the following.
+
 ## Equities and benchmarks
 
 ### benchmarks.csv 
