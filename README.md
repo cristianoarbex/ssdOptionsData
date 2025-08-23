@@ -22,7 +22,7 @@ In the spreadsheet, we construct the returns of the option strategy above from 0
   3. Columns __G__ and __H__ indicate whether the condition established for the OS is true or false.
   4. Columns __J-R__ build a continuous time series for a PUT OTM, with a $3$% moneyness target. __This is not yet the OS__, rather it is a component that will later be used to build the OS. The continuous time series (continuous meaning without interruptions) assumes automatic rollover to a different option whenever one of these two conditions are met:
      1. The current date is less than 20 days before the current expiration,
-     2. The current exercise $E$ has deviated $\pm 3$% from the option-implied forward price $F$ of the S&P500, meaning $|\frac{F - E}{F}| \geq 3\%$.
+     2. The current exercise $E$ has deviated $\pm 3$% from the option-implied forward price $F$ of the S&P500, meaning $|\frac{F - E}{F}| \geq 3\\%$.
 
 ### Deciding the expiration
 
