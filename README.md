@@ -20,9 +20,9 @@ In the spreadsheet, we construct the returns of the option strategy above from 0
   1. Columns __A__ and __B__ are the S&P500 prices 30 days prior to the range above. This information is used to calculate the condition used to create the OS as described above.
   2. Columns __C-F__ are the main data from which option returns are built. These include S&P500 price, the risk-free rate and implied volatility (using VIX as a proxy).
   3. Columns __G__ and __H__ indicate whether the condition established for the OS is true or false.
-  4. Columns __J-R__ build a continuous time series for a PUT OTM, with a 3% moneyness target. __This is not yet the OS__, rather it is a component that will later be used to build the OS. The continuous time series (continuous meaning without interruptions) assumes automatic rollover to a different option whenever one of these two conditions are met:
+  4. Columns __J-R__ build a continuous time series for a PUT OTM, with a $3$% moneyness target. __This is not yet the OS__, rather it is a component that will later be used to build the OS. The continuous time series (continuous meaning without interruptions) assumes automatic rollover to a different option whenever one of these two conditions are met:
      1. The current date is less than 20 days before the current expiration,
-     2. The current exercise $E$ has deviated $\pm 3%%$ from the option-implied forward price $F$ of the S&P500, meaning $|\frac{F - E}{F}| \geq 3%%$.
+     2. The current exercise $E$ has deviated $\pm 3$% from the option-implied forward price $F$ of the S&P500, meaning $|\frac{F - E}{F}| \geq 3\%$.
 
 ### Deciding the expiration
 
@@ -30,6 +30,32 @@ In the spreadsheet, we construct the returns of the option strategy above from 0
   6. In __Row 10__, we change the expiration date because 2022-10-31 is less than 20 days after 2022-10-12. The interpretation here is that if we were to buy an option on 2022-10-03, we would buy the one with expiration on 2022-10-31.
   7. With this decision we can calculate $L = 0.0767$ (time to expiration, in years), column __J__.
   8. Say $S$ is the current S&P500 price (column __D__) and $r$ is the annualised risk-free rate (column __E__). Having $L$, we calculate $F$ in column $L$ with the formula: $S\times e^{rL}$.
+
+### Deciding the exercise
+  
+  9. In __Row 3__, the exercise is straightforward given the rule decided in Step 4. above. We find the multiple of 5 that matches $F' = F \times 0.97$ (meaning a $3$% target moneyness, column __M__) as close as possible.
+  10. In __Row 4__, notice that the exercise $3575$ has deviated from $F'$ by more than $3$% (the deviation is shown in column __N__). Here we then have to change the option from exercise 3575 to 3685 to bring it back to the target moneyness.
+  11. This change does not need to happen in __Row 5__ since $F'$ did not deviate enough from 3685. Overall the exercise is changed the exercise more often than the expiration date. In practical terms this would liquidating the position in the currently held options and buying the new one. This incurs costs and liquidity penalties, but for simplicity in this paper we ignore these.
+
+### Calculating the PUT OTM prices and returns
+
+  12. On 2022-10-03, we bought the option with the expiration/exercise given in __Row 3__ at the end of the day. According to Black-Scholes, we paid $\$72.158$ per unit of that option (Column __Q__).
+      1. On 2022-10-04, __Row 4__, we held the option from __Row 3__ until the end of the day. We sold it for $\$35.813$ (Column __P__), a return of approximately -50%.
+      2. On the same day, we used the proceedings from selling the __Row 3__ option to buy the __Row 4__ option for $\$68.018$ per unit.
+      3. We did not need to change the option held in __Row 5__, hence the prices in Columns __P__ and __Q__ are identical.
+  
+  13. With the logic above, we construct a long-term series of returns for a PUT OTM 3% in column __R__.
+
+### Constructing our option strategy
+
+  14. Columns __T__ and __U__ indicate whether we should buy the option or invest in the risk-free rate, given the condition in column __H__.
+  15. On 2022-10-18 (__Row 14__) the condition is false, hence we should hold the risk-free rate.
+      1. On that day, we had kept the option from the day before (__Row 13__), and sold it on __Row 14__. Hence the return at the end of the day is -23%, the option return.
+      2. At the end of the day, we "bought" the risk-free rate.
+      3. The return on 2022-10-19 (__Row 15__) is the risk-free return.
+      4. On 2022-10-19, the condition is true. At the end of the day (__Row 15__) we buy the option again (with expiration 2022-11-18 and exercise 3620).
+      5. The return on __Row 16__ is the option return, 8.96%.
+  16. With this logic, we construct a long-term series of returns for the OS, which alternates between risk-free investment and the PUT OTM 3%.
 
 ___
 # Data
