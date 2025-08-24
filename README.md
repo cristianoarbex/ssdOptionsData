@@ -5,7 +5,9 @@ This is the dataset used in the paper _Enhanced indexation using both equity ass
 The dataset comprises the period from 17/03/2017 until 01/08/2025. It is composed of the files below.
 
 ___
-# Construction of an option strategy  (```Option strategy.xlsx```)
+# Construction of an option strategy  
+
+### Illustration in ```Option strategy.xlsx```
 
 Before describing the dataset, it is important to explain how an option strategy is constructed. The idea is that, from options that either exist or existed in the past, we build a long-term time series of returns. This time series can be interpreted as a __synthetic asset__ which mirrors returns obtained by investing continuously in options following a given policy.
 
